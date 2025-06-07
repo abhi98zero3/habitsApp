@@ -1,45 +1,24 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Tabs } from "expo-router";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+    <Tabs screenOptions={{ headerShown: false, tabBarPosition : "bottom", tabBarStyle : {backgroundColor : "#f4f7df"}, tabBarActiveTintColor : "#2d8707"}}>
       <Tabs.Screen
         name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
+        options={{ title: "Today's Habits", tabBarIcon: ({color, size}) => {
+            return(<MaterialCommunityIcons name="calendar-today" size={size} color={color}/>)
+        } }}
       />
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
+        name="streaks"
+        options={{ title: "Streaks", tabBarIcon: ({color, size}) => {
+            return(<MaterialCommunityIcons name="chart-line" size={size} color={color}/>)
+        } }}
       />
+      <Tabs.Screen name="addHabit" options={{title : "Add Habit", tabBarIcon : ({color, size}) => {
+        return(<MaterialCommunityIcons name="plus" size={size} color={color}/>)
+      }}}/>
     </Tabs>
   );
 }

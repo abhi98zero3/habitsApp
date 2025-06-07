@@ -1,29 +1,41 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Stack, useRouter, useSegments } from "expo-router";
+import { useEffect } from "react";
+import { AuthContextProvider, useAuth } from "@/lib/authContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { MD3LightTheme, PaperProvider } from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const RouteGuard = ({ children }: { children: React.ReactNode }) => {
+  const { user, loadingUser } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    const inAuthGroup = segments[0] === "auth";
+    if (!user && !inAuthGroup && !loadingUser) {
+      router.replace("/auth");
+    } else if (user && inAuthGroup && !loadingUser) {
+      router.replace("/");
+    }
+  }, [loadingUser, user, router, segments]);
+
+  return <>{children}</>;
+};
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{flex : 1}}>
+      <AuthContextProvider>
+        <PaperProvider theme={MD3LightTheme}>
+          <SafeAreaProvider>
+            <RouteGuard>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" />
+              </Stack>
+            </RouteGuard>
+          </SafeAreaProvider>
+        </PaperProvider>
+      </AuthContextProvider>
+    </GestureHandlerRootView>
   );
 }
