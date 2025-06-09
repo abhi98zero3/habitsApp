@@ -92,7 +92,7 @@ export default function AddHabit() {
               label:
                 frequency.charAt(0).toLocaleUpperCase() + frequency.slice(1),
               checkedColor: "#02611b",
-              uncheckedColor: "#6b5e54",
+              uncheckedColor: "#cfcdca",
               style: { backgroundColor: "#f0f2c9" },
             }))}
           />
